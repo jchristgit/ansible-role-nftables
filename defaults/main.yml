@@ -1,0 +1,48 @@
+---
+nftables_input_chain_rules: []
+nftables_configuration: |
+  flush ruleset
+
+  # Partially taken from
+  # https://xdeb.org/post/2019/setting-up-a-server-firewall-with-nftables-that-support-wireguard-vpn/
+  table inet firewall {
+    chain input {
+      type filter hook input priority 0
+
+      # Drop anything not explicitly dropped or accepted by default
+      policy drop
+
+      # Drop invalid packets
+      ct state invalid drop
+
+      # Allow already established connections
+      ct state established,related accept
+
+      # Allow loopback
+      iif lo accept
+
+      # Allow certain inbound ICMP types (ping, traceroute).
+      # With these allowed you are a good network citizen.
+      ip protocol icmp icmp type { destination-unreachable, echo-reply, echo-request, source-quench, time-exceeded } accept
+      # Without the nd-* ones ipv6 will not work.
+      ip6 nexthdr icmpv6 icmpv6 type { destination-unreachable, echo-reply, echo-request, nd-neighbor-solicit,  nd-router-advert, nd-neighbor-advert, packet-too-big, parameter-problem, time-exceeded } accept
+
+      # Allow SSH... you are logged in via port 22, right? :-)
+      iifname {{ ansible_default_ipv4.interface }} tcp dport 22 ct state new accept
+      iifname {{ ansible_default_ipv6.interface }} tcp dport 22 ct state new accept
+  {% for rule in nftables_input_chain_rules %}
+      {{ rule }}
+  {% endfor %}
+    }
+
+    chain forward {
+      type filter hook forward priority 0
+      policy drop
+      ct state invalid drop
+    }
+
+    chain output {
+      type filter hook output priority 0
+      policy accept
+    }
+  }

@@ -1,0 +1,29 @@
+---
+- name: install nftables
+  package:
+    name: nftables
+    state: present
+  tags:
+    - role::nftables
+
+- name: enable nftables
+  service:
+    name: nftables
+    enabled: true
+  tags:
+    - role::nftables
+
+- name: template nftables configuration
+  copy:
+    content: |
+      #!/usr/sbin/nft -f
+
+      {{ nftables_configuration }}
+    dest: /etc/nftables.conf
+    owner: root
+    group: root
+    mode: 0544
+  notify:
+    - reload nftables
+  tags:
+    - role::nftables
