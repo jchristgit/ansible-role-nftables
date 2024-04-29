@@ -23,6 +23,7 @@
     owner: root
     group: root
     mode: 0544
+    validate: /usr/sbin/nft --check --file %s
   notify:
     - reload nftables
   tags:
