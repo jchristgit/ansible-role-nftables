@@ -25,7 +25,8 @@ nftables_configuration: |
       # With these allowed you are a good network citizen.
       ip protocol icmp icmp type { destination-unreachable, echo-reply, echo-request, source-quench, time-exceeded } accept
       # Without the nd-* ones ipv6 will not work.
-      ip6 nexthdr icmpv6 icmpv6 type { destination-unreachable, echo-reply, echo-request, nd-neighbor-solicit,  nd-router-advert, nd-neighbor-advert, packet-too-big, parameter-problem, time-exceeded } accept
+      ip6 nexthdr icmpv6 icmpv6 type { destination-unreachable, echo-reply, echo-request, nd-neighbor-solicit,
+                                       nd-router-advert, nd-neighbor-advert, packet-too-big, parameter-problem, time-exceeded } accept
 
       # Allow SSH... you are logged in via port 22, right? :-)
       iifname {{ ansible_default_ipv4.interface }} tcp dport 22 ct state new accept

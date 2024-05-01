@@ -1,2 +1,5 @@
 ---
 dependencies: []
+galaxy_info:
+  role_name: nftables
+  namespace: jchristgit

@@ -1,5 +1,7 @@
 ---
-- name: reload nftables
-  service:
+- name: Reload nftables
+  ansible.builtin.service:
     name: nftables
     state: reloaded
+  tags:
+    - role::nftables
