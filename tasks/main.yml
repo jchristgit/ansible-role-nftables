@@ -25,6 +25,6 @@
     mode: "0544"
     validate: /usr/sbin/nft --check --file %s
   notify:
-    - reload nftables
+    - Reload nftables
   tags:
     - role::nftables
